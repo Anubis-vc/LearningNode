@@ -22,5 +22,5 @@ async function addBook(bookId, bookName) {
 	books.push({ id: bookId, name: bookName, reserved: true });
 }
   
-  module.exports = { getAuthorById, getBookById, addBook };
+module.exports = { getAuthorById, getBookById, addBook };
   
