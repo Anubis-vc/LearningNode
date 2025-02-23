@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<title>Message Board</title>
+	</head>
+	<body>
+		<h1>Welcome to the Message Board</h1>
+		<a href="new">Create New Post</a>
+		<ul>
+			<% messages.map(message => { %>
+				<% id = message.id %>
+				<li> <%=message.user%>, <%=message.text%>, <%=message.added%> <a href="/message/<%= message.id %>">Open</a></li>
+			<%}); %>
+		</ul>
+	</body>
+</html>
