@@ -1,0 +1,22 @@
+body {
+	width: 100%;
+	margin: auto;
+	color:black;
+}
+
+nav {
+	display: inline-block;
+	width: 100%;
+}
+
+nav ul {
+	display: flex;
+	gap: 5rem;
+}
+
+footer {
+	align-items: center;
+	text-align: center;
+	width: 100%;
+	margin: auto;
+}
