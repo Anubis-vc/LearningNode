@@ -1,0 +1,35 @@
+main {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 75vh;
+    width: 80dvw;
+    overflow-y: scroll;
+    padding: 20px;
+    border: 1px solid #6b7280;
+}
+
+.message-card {
+	border: 1px solid #6b7280;
+	padding: 5px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px
+}
+
+p {
+	padding: 0.25rem 0;
+}

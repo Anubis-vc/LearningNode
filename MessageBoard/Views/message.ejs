@@ -1,13 +1,21 @@
 <html>
 	<head>
+		<meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/styles.css" />
+        <link rel="stylesheet" href="/message.css" />
 		<title>Message: <%= id %> </title>
 	</head>
 	<body>
-		<div>
-			<a href="/">Back to Home</a>
-		</div>
-		<h1>User: <%= user %> </h1>
-		<h2>Time: <%= added %> </h2>
-		<p>Message: <%= text %> </p>
+		<main>
+			<div>
+				<a href="/">Back to Home</a>
+			</div>
+			<div class="detail-card">
+				<p>User: <span><%= user %></span></p>
+				<p>Date: <span><%= added %></span></p>
+				<p>Message: <span><%= text %></span></p>
+			</div>
+		</main>
 	</body>
 </html>

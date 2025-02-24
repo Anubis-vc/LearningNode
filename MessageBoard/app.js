@@ -7,6 +7,9 @@ const messageRouter = require("./Routes/messageRouter");
 const app = express();
 const PORT = 3000;
 
+const assetsPath = path.join(__dirname, "public");
+app.use(express.static(assetsPath));
+
 app.use(express.urlencoded({ extended: true }));
 
 app.set("views", path.join(__dirname, "Views"));

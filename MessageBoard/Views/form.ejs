@@ -1,18 +1,22 @@
 <html>
 	<head>
-		<title>
-			Create New Post
-		</title>
+		<meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Create New Post</title>
+        <link rel="stylesheet" href="/styles.css" />
+        <link rel="stylesheet" href="/form.css" />
 	</head>
 	<body>
-		<div>
-			<a href="/">Back to Home</a>
-		</div>
-		<form action="/new" method="POST">
+		<main>
+			<div>
+				<a href="/">Back to Home</a>
+			</div>
 			<h2>Create New Post</h2>
-			<input name="name" id="name" type="text" placeholder="enter name"/>
-			<textarea name="text" id="text" placeholder="enter message"></textarea>
-			<button type="submit">Submit</button>
-		</form>
+			<form action="/new" method="POST">
+				<input name="name" id="name" type="text" placeholder="enter name"/>
+				<textarea name="text" id="text" placeholder="enter message"></textarea>
+				<button type="submit">Submit</button>
+			</form>
+		</main>
 	</body>
 </html>

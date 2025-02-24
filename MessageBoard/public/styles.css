@@ -1,0 +1,23 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #152238;
+	color: white;
+}
+
+button {
+	cursor: pointer;
+	outline: none;
+}
+
+a {
+		padding: 8px;
+		color: white;
+		background-color: transparent;
+		text-decoration: underline;
+		font-weight: 600;
+}

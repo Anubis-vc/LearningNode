@@ -1,15 +1,29 @@
 <html>
 	<head>
-		<title>Message Board</title>
+		<meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Index</title>
+        <link rel="stylesheet" href="/styles.css" />
+        <link rel="stylesheet" href="/index.css" />
 	</head>
 	<body>
-		<h1>Welcome to the Message Board</h1>
-		<a href="new">Create New Post</a>
-		<ul>
-			<% messages.map(message => { %>
-				<% id = message.id %>
-				<li> <%=message.user%>, <%=message.text%>, <%=message.added%> <a href="/message/<%= message.id %>">Open</a></li>
-			<%}); %>
-		</ul>
+		<main>
+			<h1>Welcome to the Message Board</h1>
+			<h3><a href="new">Create New Post</a></h3>
+			<section class="messages">
+				<% messages.map(message => { %>
+					<article class="message-card">
+						<div class="header">
+							<h3><%=message.user%></h3>
+							<a href="/message/<%= message.id %>">Open</a>
+						</div>
+						<div class="message">
+							<p><%=message.added.toLocaleString()%></p>
+							<p><%=message.text%></p>
+						</div>
+					</article>
+				<%}); %>
+			</section>
+		</main>
 	</body>
 </html>
