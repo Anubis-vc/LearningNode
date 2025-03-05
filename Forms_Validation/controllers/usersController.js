@@ -11,6 +11,15 @@ const validateUser = [
 	body("lastName").trim()
 		.isAlpha().withMessage(`Last Name: ${alphaErr}`)
 		.isLength({ min: 1, max: 15 }).withMessage(`Last Name: ${lengthErr}`),
+	body("email").trim()
+		.isEmail().withMessage("Must be a valid email"),
+	body("age").trim()
+		.optional({ values: "falsy" })
+		.isInt({ min: 18, max: 120}).withMessage("Must be valid number between 18 and 120"),
+	body("bio").trim()
+		.optional({ values: 'falsy' })
+		.isAlpha().withMessage(`Bio: ${alphaErr}`)
+		.isLength({ min: 1, max: 200 }).withMessage(`Must be less than 200 characters`),
 ];
 
 exports.usersListGet = (req, res) => {
@@ -36,8 +45,8 @@ exports.usersCreatePost = [
 				errors: errors.array(),
 			});
 		}
-		const { firstName, lastName } = req.body;
-		usersStorage.addUser({ firstName, lastName });
+		const { firstName, lastName, email, age, bio } = req.body;
+		usersStorage.addUser({ firstName, lastName, email, age, bio });
 		res.redirect("/");
 	}
 ];
@@ -65,8 +74,8 @@ exports.usersUpdatePost = [
 				errors: errors.array(),
 			});
 		}
-		const { firstName, lastName } = req.body;
-		usersStorage.updateUser(req.params.id, { firstName, lastName });
+		const { firstName, lastName, email, age, bio } = req.body;
+		usersStorage.updateUser(req.params.id, { firstName, lastName, email, age, bio });
 		res.redirect("/");
 	}
 ];
