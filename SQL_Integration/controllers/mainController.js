@@ -2,9 +2,17 @@ const path = require("path");
 const db = require("../db/queries");
 
 async function usersGet(req, res) {
-	const usernames = await db.getAllUsernames();
-	console.log("Usernames: ", usernames);
-	res.send("Usernames: " + usernames.map(user => user.username).join(", "));
+	const searchQuery = req.query.search || null;
+	if (searchQuery) {
+		const usernames = await db.searchName(req.query.search);
+		console.log("Matching users: ", usernames);
+		res.send("Matching users: " + usernames.map(user => user.username).join(", "));
+	}
+	else {
+		const usernames = await db.getAllUsernames();
+		console.log("Usernames: ", usernames);
+		res.send("Usernames: " + usernames.map(user => user.username).join(", "));
+	}
 };
 
 async function newUserGet(req, res) {
@@ -20,5 +28,5 @@ async function newUserPost(req, res) {
 module.exports = {
 	usersGet,
 	newUserGet,
-	newUserPost
-  };
+	newUserPost,
+};
