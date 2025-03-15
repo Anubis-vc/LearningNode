@@ -22,6 +22,17 @@ const validateUser = [
 		.isLength({ min: 1, max: 200 }).withMessage(`Must be less than 200 characters`),
 ];
 
+const validateSearch = [
+	body("name").trim()
+		.optional()
+		.isAlpha().withMessage(`Name ${alphaErr}`),
+	body("email").trim()
+		.optional()
+		.if(body("name").exists())
+			.isEmpty()
+		.isEmail().withMessage("Must be a valid email")
+]
+
 exports.usersListGet = (req, res) => {
 	res.render("index", {
 		title: "User list",
@@ -84,3 +95,7 @@ exports.usersDeletePost = (req, res) => {
 	usersStorage.deleteUser(req.params.id);
 	res.redirect("/");
 };
+
+exports.usersSearchGet = (req, res) => {
+	usersStorage.delete
+}

@@ -10,6 +10,12 @@
 	<h1>
 		<%= title %>
 	</h1>
+	<h2>Search User</h2>
+	<form action="/search" method="GET">
+		<input type="text" name="name" placeholder="name"/>
+		OR
+		<input type="email" name="email" placeholder="email"/>
+	</form>
 	<ul>
 		<% if (locals.users) {%>
 			<% users.forEach(user=> { %>

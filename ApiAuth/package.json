@@ -1,0 +1,16 @@
+{
+  "name": "apiauth",
+  "version": "1.0.0",
+  "description": "practicing authentication w jwt and api",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
