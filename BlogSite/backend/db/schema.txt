@@ -1,0 +1,49 @@
+Table "public.users"
+  Column   | Type | Collation | Nullable | Default 
+-----------+------+-----------+----------+---------
+ username  | text |           | not null | 
+ password  | text |           | not null | 
+ firstname | text |           | not null | 
+ lastname  | text |           | not null | 
+ email     | text |           | not null | 
+Indexes:
+    "users_pkey" PRIMARY KEY, btree (username)
+    "users_email_key" UNIQUE CONSTRAINT, btree (email)
+Referenced by:
+    TABLE "comments" CONSTRAINT "comments_username_fkey" FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+
+----------------------------------------------------------------
+
+ Table "public.comments"
+   Column    |            Type             | Collation | Nullable |               Default                
+-------------+-----------------------------+-----------+----------+--------------------------------------
+ id          | integer                     |           | not null | nextval('comments_id_seq'::regclass)
+ post_id     | integer                     |           |          | 
+ username    | text                        |           |          | 
+ text        | text                        |           | not null | 
+ timecreated | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+Indexes:
+    "comments_pkey" PRIMARY KEY, btree (id)
+Foreign-key constraints:
+    "comments_post_id_fkey" FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+    "comments_username_fkey" FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+
+----------------------------------------------------------------
+
+ Table "public.posts"
+   Column    |     Type     | Collation | Nullable |              Default              
+-------------+--------------+-----------+----------+-----------------------------------
+ id          | integer      |           | not null | nextval('posts_id_seq'::regclass)
+ movie       | text         |           | not null | 
+ director    | text         |           | not null | 
+ poster      | text         |           |          | 
+ releasedate | date         |           |          | 
+ review      | text         |           | not null | 
+ rating      | numeric(3,1) |           |          | 
+ datewatched | date         |           | not null | 
+Indexes:
+    "posts_pkey" PRIMARY KEY, btree (id)
+Check constraints:
+    "posts_rating_check" CHECK (rating >= 0::numeric AND rating <= 10::numeric)
+Referenced by:
+    TABLE "comments" CONSTRAINT "comments_post_id_fkey" FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
