@@ -97,8 +97,36 @@ async function deleteComment(commentId) {
 	return result.rows;
 }
 
-async function getUser(id) {
-	await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+async function getUser(username) {
+	const { rows } = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+	return rows;
+}
+
+async function checkEmail(email) {
+	const { rows } = await pool.query("SELECT count(username) FROM users WHERE email = $1", [email]);
+	return rows[0].count;
+}
+
+async function addUser(username, password, email) {
+	const result = await pool.query(
+		`
+		INSERT INTO users (username, password, email)
+		VALUES ($1, $2, $3)
+		RETURNING *
+		`
+		, [username, password, email]
+	);
+	return result;
+}
+
+async function deleteUser(username) {
+	const { rowCount } = await pool.query(
+		`DELETE FROM users WHERE username = $1 RETURNING *`, [username]
+	);
+
+	if (rowCount == 0) {
+		throw new NotFoundError("User", username);
+	}
 }
 
 module.exports = {
@@ -110,4 +138,7 @@ module.exports = {
 	addComment,
 	deleteComment,
 	getUser,
+	checkEmail,
+	addUser,
+	deleteUser,
 };

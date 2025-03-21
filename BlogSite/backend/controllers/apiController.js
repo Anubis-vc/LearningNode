@@ -20,27 +20,30 @@ async function getPost(req, res) {
 }
 
 async function addPost(req, res) {
-	const { 
-		movie,
-		director,
-		poster,
-		releaseDate,
-		review,
-		rating,
-		dateWatched,
-	} = req.body;
-	
-	const newPost = await db.addPost(
-		movie,
-		director,
-		poster,
-		releaseDate,
-		review,
-		Number(rating),
-		dateWatched,
-	);
-
-	res.json({ message: "Post created", newPost: newPost });
+	try {
+		const { 
+			movie,
+			director,
+			poster,
+			releaseDate,
+			review,
+			rating,
+			dateWatched,
+		} = req.body;
+			
+		const newPost = await db.addPost(
+			movie,
+			director,
+			poster,
+			releaseDate,
+			review,
+			Number(rating),
+			dateWatched,
+		);
+		res.json({ message: "Post created", newPost: newPost });
+	} catch(err) {
+		res.status(500).json({ error: err.message })
+	}
 }
 
 async function updatePost(req, res) {
@@ -91,15 +94,19 @@ async function deletePost(req, res) {
 }
 
 async function addComment(req, res) {
-	const { 
-		postId,
-		username,
-		text,
-		time,
-	} = req.body;
+	try {
+		const { 
+			postId,
+			username,
+			text,
+			time,
+		} = req.body;
 
-	const newComment = await db.addComment(Number(postId), username, text, time);
-	res.json({ message: "comment created", newComment });
+		const newComment = await db.addComment(Number(postId), username, text, time);
+		res.json({ message: "comment created", newComment });
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 }
 
 async function deleteComment(req, res) {
