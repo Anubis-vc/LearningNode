@@ -4,26 +4,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { NotFoundError } = require('../errors/errors');
 
-async function tester(req, res) {
-	const { username } = req.params;
-	console.log(username)
-	
-	try {
-		const count = await db.deleteUser(username);
-		if (count == 0) {
-			res.send("count returned 0");
-		}
-		else {
-			res.send("count");
-		}
-	} catch(err) {
-		if (err instanceof NotFoundError) {
-			return res.send("It's not found");
-		}
-			res.send("It's something else");
-	}
-}
-
 async function login(req, res) {
 	const { username, password } = req.body;
 	try {
@@ -120,8 +100,9 @@ async function newUser(req, res) {
             maxAge: 24 * 60 * 60 * 1000,
 			path: "/",
         });
+
+		res.status(201).json({ message: "user successfully created" });
 		
-		res.status(201).json({ accessToken });
 	} catch(err) {
 		res.status(500).json({ error: err.message });
 	}
@@ -172,11 +153,33 @@ async function logout (req, res) {
 	res.json({ message: "Logged out successfully" });
 }
 
+async function getMe(req, res) {
+	try {
+		if (!req.user) {
+			return res.status(401).json({ error: "no authentication" });
+		}
+
+		const user = await db.getUser(req.user.username);
+		if (!user || user.length == 0) {
+			return res.status(404).json({ error: "user not found" });
+		}
+
+		res.json({
+			username: user[0].username,
+			email: user[0].email,
+			isAdmin: user[0].isAdmin,
+		});
+	}
+	catch (err) {
+		res.status(500).json({ err: err.message });
+	}
+}
+
 module.exports = {
 	login,
 	admin,
 	newUser,
 	deleteAccount,
 	logout,
-	tester,
+	getMe,
 }

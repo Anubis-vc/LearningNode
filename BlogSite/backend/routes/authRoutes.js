@@ -8,9 +8,8 @@ authRouter.post('/admin', authController.admin);
 authRouter.post('/newuser', authController.newUser);
 
 authRouter.get('/logout', authController.logout);
+authRouter.get('/me', authenticateToken, authController.getMe);
 
 authRouter.delete('/account', authenticateToken, authController.deleteAccount);
-
-authRouter.get('/tester/:username', authController.tester);
 
 module.exports = authRouter;

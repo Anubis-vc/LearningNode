@@ -12,6 +12,4 @@ apiRouter.delete('/posts/:id', apiController.deletePost);
 apiRouter.post('/posts/comments/', apiController.addComment);
 apiRouter.delete('/posts/comments/:id', apiController.deleteComment);
 
-// apiRouter.get('/user:id', apiController.getUser);
-
 module.exports = apiRouter;

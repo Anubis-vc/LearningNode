@@ -28,6 +28,7 @@ export const authApi = {
 	adminLogin: (username: string, password:string) => api.post('/auth/login', { username, password }),
 	register: (username: string, password:string, email:string) => api.post('/auth/newuser', { username, password, email }),
 	logout: () => api.get('auth/logout'),
+	me: () => axios.get('/auth/logout'),
 	// delete requires data field because axios expects payload and auto configures for post
 	// does not do the same for delete cause payload not always required
 	deleteAccount: (username:string, password:string) => api.delete('/auth/account', { data: { username, password } })

@@ -23,10 +23,21 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 
-	// run just once on mount
+	// check to see if user already logged in when app loads
 	useEffect(() => {
-		// add an auth/me to see if user already logged in?
-		setLoading(false)
+		async () => {
+			setLoading(true);
+			try {
+				const response = await authApi.me();
+				setUser({ username: response.data.username, isAdmin: response.data.isAdmin })
+			}
+			catch (err) {
+				setUser(null)
+			}
+			finally {
+				setLoading(false)
+			}
+		}
 	}, []);
 
 	const login = async (username: string, password: string) => {
