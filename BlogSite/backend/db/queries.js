@@ -7,7 +7,32 @@ async function getPosts() {
 }
 
 async function getPost(id) {
-	const result = await pool.query("SELECT * FROM posts WHERE id = ($1)", [id]);
+	const result = await pool.query(
+		`
+		SELECT 
+			posts.id,
+			posts.movie,
+			posts.director,
+			posts.poster,
+			posts.releasedate,
+			posts.review,
+			posts.rating,
+			posts.datewatched,
+			COALESCE(json_agg(
+				json_build_object(
+					'id', comments.id,
+					'post_id', comments.post_id,
+					'username', comments.username,
+					'text', comments.text,
+					'time_created', comments.timecreated
+				)
+			) FILTER (WHERE comments.id IS NOT NULL), '[]') AS comments
+		FROM posts
+		LEFT JOIN comments ON posts.id = comments.post_id
+		WHERE posts.id = $1
+		GROUP BY posts.id
+		`
+		, [id]);
 	if (result.rowCount === 0) {
 		throw new NotFoundError("Post", id);
 	}

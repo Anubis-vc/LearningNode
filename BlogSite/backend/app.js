@@ -1,3 +1,7 @@
+// TODO: add books to db, allow logged in users to post.
+// create view in backend 
+// admin can edit any post, user can only edit their own
+
 require("dotenv").config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
