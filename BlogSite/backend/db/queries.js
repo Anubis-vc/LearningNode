@@ -21,10 +21,10 @@ async function getPost(id) {
 			COALESCE(json_agg(
 				json_build_object(
 					'id', comments.id,
-					'post_id', comments.post_id,
+					'postId', comments.post_id,
 					'username', comments.username,
 					'text', comments.text,
-					'time_created', comments.timecreated
+					'time', comments.timecreated
 				)
 			) FILTER (WHERE comments.id IS NOT NULL), '[]') AS comments
 		FROM posts

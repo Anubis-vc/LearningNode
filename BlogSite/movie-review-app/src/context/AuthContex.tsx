@@ -9,7 +9,7 @@ interface AuthContextType {
 	adminLogin: (username: string, password:string) => Promise<void>
 	logout: () => Promise<void>
 	register: (username: string, password: string, email: string) => Promise<void>
-	isAdmin: () => boolean;
+	isAdmin: boolean;
 }
 
 // make sure nested child is text, jsx, component, or fragment
@@ -62,7 +62,6 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 			setUser({ username, isAdmin: false });
 		}
 	};
-	const isAdmin = () => user?.isAdmin || false;
 
 	return (
 		<AuthContext.Provider value={{
@@ -72,7 +71,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 			adminLogin,
 			logout,
 			register,
-			isAdmin,
+			isAdmin: user?.isAdmin || false,
 		}}>
 			{children}
 		</AuthContext.Provider>
@@ -80,7 +79,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 };
 
 // create custom hook for accessing context
-export const userAuth = () => {
+export const useAuth = () => {
 	const context = useContext(AuthContext);
 	if (context === undefined) {
 		throw new Error('useAuth must be used within an auth provider context')
