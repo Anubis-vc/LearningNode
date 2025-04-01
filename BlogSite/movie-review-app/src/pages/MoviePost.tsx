@@ -151,7 +151,7 @@ const MoviePost = () => {
 			</div>
 
 		</section>
-	)
-}
+	);
+};
 
 export default MoviePost;
