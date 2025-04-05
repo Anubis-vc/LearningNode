@@ -1,12 +1,14 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { postsApi } from '../../api';
-import { Post } from '../../types'
+import { postsApi } from '../api/api';
+import { Post } from '../types/types'
+import { useAuth } from '../context/AuthContext';
 
 const PostEditor = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate()
-	const isEditMode = !(!id)
+	const isEditMode = Boolean(id)
+	const { user, isAdmin } = useAuth();
 
 	const [formData, setFormData] = useState<Omit<Post, 'id'>>({
 		movie: '',
@@ -14,8 +16,9 @@ const PostEditor = () => {
 		poster: '',
 		releaseDate: '',
 		review: '',
-		rating: 5,
-		dateWatched: new Date().toISOString().split('T')[0]
+		rating: 0,
+		dateWatched: new Date().toISOString().split('T')[0],
+		author: user?.username || '',
 	});
 
 	const [loading, setLoading] = useState(isEditMode);
@@ -26,8 +29,17 @@ const PostEditor = () => {
 			if (!isEditMode) return;
 			
 			try {
-				setLoading(true)
+				setLoading(true);
 				const response = await postsApi.getPost(Number(id));
+
+				const postAuthor = response.data.author;
+				const canEdit = isAdmin || (user && user.username == postAuthor);
+				if (!canEdit) {
+					setError("You don't have permission to edit this post");
+					navigate('/unauthorized');
+					return;
+				}
+
 				setFormData({
 					movie: response.data.movie,
 					director: response.data.director,
@@ -36,17 +48,18 @@ const PostEditor = () => {
 					review: response.data.review,
 					rating: response.data.rating,
 					dateWatched: response.data.datewatched,
+					author: response.data.author,
 				});
 			}
 			catch (err: any) {
-				setError(err.response?.data?.error || 'Failed to load post')
+				setError(err.response?.data?.error || 'Failed to load post');
 			}
 			finally {
 				setLoading(false)
 			}
-		}
+		};
 		fetchPost();
-	}, [id, isEditMode])
+	}, [id, isEditMode, isAdmin, user, navigate])
 
 	const handleChange = (e: any) => {
 		const { name, value } = e.target;
@@ -60,6 +73,10 @@ const PostEditor = () => {
 		e.preventDefault();
 		setError('');
 
+		if(!isEditMode) {
+			formData.author = user?.username || ''
+		}
+
 		try {
 			if (isEditMode) {
 				await postsApi.updatePost(Number(id), formData);
@@ -67,14 +84,25 @@ const PostEditor = () => {
 			else {
 				await postsApi.createPost(formData);
 			}
-			navigate('/admin');
+			if (isAdmin) {
+				navigate('/admin');
+			} else {
+				navigate('/my-posts');
+			}
 		}
 		catch (err: any) {
 			setError(err.response?.data?.error || 'Failed to save post, try again later');
 		}
 	};
 
-	if (loading) return <div>Loading...</div>
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
+	if (!user) {
+		navigate('/login')
+		return null;
+	}
 
 	return (
 		<div className='post-editor'>
@@ -144,7 +172,7 @@ const PostEditor = () => {
 				</div>
 
 				<div className='form-group'>
-					<label htmlFor="rating">Raring (1-10)</label>
+					<label htmlFor="rating">Rating (1-10)</label>
 					<input
 						type="number"
 						id="rating"
@@ -159,19 +187,19 @@ const PostEditor = () => {
 
 				<div className='form-group'>
 					<label htmlFor="review">Review</label>
-					<input
-						type="text"
+					<textarea
 						id="review"
 						name="review"
 						value={formData.review}
 						onChange={handleChange}
+						rows={6}
 						required
 					/>
 				</div>
 
 				<div className='form-actions'>
 					<button type="submit">{isEditMode ? 'Update Review' : 'Post Review'}</button>
-					<button onClick={() => navigate('admin')}>Cancel</button>
+					<button onClick={() => isAdmin ? navigate('/admin') : navigate('/my-posts')}>Cancel</button>
 				</div>
 			</form>
 

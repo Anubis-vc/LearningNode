@@ -3,16 +3,17 @@ export interface Post {
 	movie: string;
 	director: string;
 	poster: string;
-	releaseDate: string;
+	releasedate: string;
 	review: string;
 	rating: number;
-	dateWatched: string;
+	datewatched: string;
+	author: string;
 }
 
 export interface Comment {
 	id: number;
+	author:string;
 	postId: number;
-	username: string;
 	text: string;
 	time: string; // can this be a datetime instead?
 }

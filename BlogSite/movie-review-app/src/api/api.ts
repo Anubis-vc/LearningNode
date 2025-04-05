@@ -1,7 +1,7 @@
 // using axios for interceptor feature, otherwise this could be done with fetch
 // plus i want practice with the tool
 import axios from 'axios'
-import { Post } from '../types';
+import { Post } from '../types/types';
 
 const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -37,6 +37,7 @@ export const authApi = {
 // api for posting
 export const postsApi = {
 	getAllPosts: () => api.get('/api/posts'),
+	getUserPosts: (username: string) => api.get(`/api/posts/user/${username}`),
 	getPost: (id: number) => api.get(`/api/posts/${id}`),
 	// use omit to take a Post without id since it is created on the backend
 	createPost: (postData: Omit<Post, 'id'>) => api.post('/api/posts', postData),
@@ -46,9 +47,9 @@ export const postsApi = {
 
 // api for commenting
 export const commentsApi = {
-	addComment: (postId: number, username: string, text: string) => {
+	addComment: (postId: number, text: string, author: string) => {
 		const time = new Date().toISOString();
-		return api.post('/api/posts/comments', { postId, username, text, time });
+		return api.post('/api/posts/comments', { postId, text, time, author });
 	},
 	deleteComment: (id: number) => api.delete(`/api/posts/comments/${id}`),
 };

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
-import { authApi } from '../api'
-import { User } from '../types'
+import { authApi } from '../api/api'
+import { User } from '../types/types'
 
 interface AuthContextType {
 	user: User | null;
@@ -25,7 +25,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 
 	// check to see if user already logged in when app loads
 	useEffect(() => {
-		async () => {
+		const checkAuth = async () => {
 			setLoading(true);
 			try {
 				const response = await authApi.me();
@@ -36,8 +36,9 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 			}
 			finally {
 				setLoading(false)
-			}
-		}
+			};
+		};
+		checkAuth()
 	}, []);
 
 	const login = async (username: string, password: string) => {
@@ -48,7 +49,7 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
 	};
 	const adminLogin = async (username: string, password: string) => {
 		const response = await authApi.adminLogin(username, password);
-		if (response.data.message === "login successful") {
+		if (response.data.message === "admin login successful") {
 			setUser({ username: username, isAdmin: true })
 		}
 	};

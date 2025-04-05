@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { postsApi, commentsApi } from '../api'
-import { useAuth } from '../context/AuthContex'
-import { Post, Comment } from '../types';
+import { postsApi, commentsApi } from '../api/api';
+import { useAuth } from '../context/AuthContext';
+import { Post, Comment } from '../types/types';
 
 const MoviePost = () => {
 	const { id } = useParams<{ id:string }>();
@@ -14,6 +14,10 @@ const MoviePost = () => {
 
 	const { user, isAdmin } = useAuth();
 	const navigate = useNavigate();
+
+	// check if current user is author of post and can edit it
+	const isAuthor = user && post && user.username === post.author;
+	const canEdit = isAdmin || isAuthor
 
 	useEffect(() => {
 		const fetchPost = async () => {
@@ -29,6 +33,7 @@ const MoviePost = () => {
 					review: response.data.review,
 					rating: response.data.rating,
 					dateWatched: response.data.datewatched,
+					author: response.data.author,
 				});
 				setComments(response.data.comments);
 
@@ -50,7 +55,7 @@ const MoviePost = () => {
 	}, [id]);
 
 	const handleDeletePost = async () => {
-		if (!isAdmin) return;
+		if (!canEdit) return;
 
 		try {
 			await postsApi.deletePost(Number(id));
@@ -65,8 +70,8 @@ const MoviePost = () => {
 		if (!user || !newComment.trim()) return;
 
 		try {
-			const response = await commentsApi.addComment(Number(id), user.username, newComment);
-			setComments([...comments, response.data.newComment()]);
+			const response = await commentsApi.addComment(Number(id), newComment, user.username);
+			setComments([...comments, response.data.newComment]);
 			setNewComment('');
 		}
 		catch (err:any){
@@ -77,7 +82,7 @@ const MoviePost = () => {
 	const handleDeleteComment = async (commentId: number) => {
 		try {
 			await commentsApi.deleteComment(commentId);
-			setComments(comments.filter(item => item.id != commentId));
+			setComments(comments.filter(item => item.id !== commentId));
 		}
 		catch (err:any) {
 			setError(err.response?.data?.error || 'Failed to delete comment');
@@ -93,17 +98,23 @@ const MoviePost = () => {
 			<div className='post-header'>
 				<h1>{post.movie}</h1>
 				<h2>Directed by {post.director}</h2>
+				<p>Posted By: {post.author}</p>
 				{post.poster && <img src={post.poster} alt={`${post.movie}`} />}
 			</div>
 
 			<div className='post-review'>
 				<h3>Review</h3>
+				<div className='post-meta'>
+					<span>Released: {new Date(post.releaseDate).toLocaleDateString()}</span>
+					<span>Watched: {new Date(post.dateWatched).toLocaleDateString()}</span>
+					<span>Rating: {post.rating}</span>
+				</div>
 				<p>{post.review}</p>
 			</div>
 
-			{isAdmin && (
-				<div className='admin-controls'>
-					<button onClick={() => navigate(`/admin/posts/${id}/edit`)}>Edit Post</button>
+			{canEdit && (
+				<div className='post-controls'>
+					<button onClick={() => navigate(`/posts/${id}/edit`)}>Edit Post</button>
 					<button onClick={handleDeletePost}>Delete Post</button>
 				</div>
 			)}
@@ -117,11 +128,11 @@ const MoviePost = () => {
 						{comments.map(comment => (
 							<div key={comment.id} className='comment'>
 								<div className='comment-header'>
-									<span className='comment-author'>{comment.username}</span>
+									<span className='comment-author'>{comment.author}</span>
 									<span className='comment-time'>{new Date(comment.time).toLocaleString()}</span>
 								</div>
 								<p className='comment-text'>{comment.text}</p>
-								{(user?.username === comment.username || isAdmin) && (
+								{(user?.username === comment.author || isAdmin) && (
 									<button
 										className='delete-comment'
 										onClick={() => handleDeleteComment(comment.id)}
