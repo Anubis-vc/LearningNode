@@ -1,9 +1,16 @@
 const { Router } = require('express');
 const authController = require('../controllers/authController')
 const authenticateToken = require('../middleware/authMiddleware');
+const rateLimit = require('express-rate-limit');
 const authRouter = Router();
 
-authRouter.post('/login', authController.login);
+const strictLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	max: 5,
+	message: { error: "Too many login attempts, try again later." }
+});
+
+authRouter.post('/login', strictLimiter, authController.login);
 authRouter.post('/admin', authController.admin);
 authRouter.post('/newuser', authController.newUser);
 

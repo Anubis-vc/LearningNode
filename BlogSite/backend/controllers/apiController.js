@@ -3,7 +3,7 @@ const { NotFoundError } = require("../errors/errors");
 
 async function getPosts(req, res) {
 	const posts = await db.getPosts();
-	res.send(posts.map(post => `${post.movie}, ${post.director}, ${post.rating}`).join("\n"));
+	res.send(posts);
 }
 
 async function getPost(req, res) {

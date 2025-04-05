@@ -1,24 +1,21 @@
 // TODO: add books to db, allow logged in users to post.
-// create view in backend 
-// admin can edit any post, user can only edit their own
-
+// create view in backend
 require("dotenv").config();
 const express = require('express');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const apiRoutes = require('./routes/apiRoutes');
 const authRoutes = require('./routes/authRoutes');
-const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.port || 3000;
 
-const limit = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	limit: 10,
-	message: { error: "Too many attempts, try again later" }
-})
+app.use(cors({
+	origin: 'http://localhost:5173',
+	credentials: true // allow cookies to send with request
+}));
 
-app.use(express.urlencoded( { extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 

@@ -2,7 +2,7 @@ const pool = require("./pool");
 const { NotFoundError } = require('../errors/errors');
 
 async function getPosts() {
-	const { rows } = await pool.query("SELECT * FROM posts");
+	const { rows } = await pool.query("SELECT * FROM posts limit 10;");
 	return rows;
 }
 
