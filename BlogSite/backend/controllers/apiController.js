@@ -28,7 +28,8 @@ async function addPost(req, res) {
 			releaseDate,
 			review,
 			rating,
-			dateWatched,
+			datewatched,
+			author,
 		} = req.body;
 			
 		const newPost = await db.addPost(
@@ -38,7 +39,8 @@ async function addPost(req, res) {
 			releaseDate,
 			review,
 			Number(rating),
-			dateWatched,
+			datewatched,
+			author,
 		);
 		res.json({ message: "Post created", newPost: newPost });
 	} catch(err) {
@@ -56,7 +58,8 @@ async function updatePost(req, res) {
 			releaseDate,
 			review,
 			rating,
-			dateWatched,
+			datewatched,
+			author,
 		} = req.body;
 
 		const updatedPost = await db.updatePost(
@@ -67,7 +70,8 @@ async function updatePost(req, res) {
 			releaseDate,
 			review,
 			Number(rating),
-			dateWatched
+			datewatched,
+			author,
 		)
 
 		res.json({ message: "Post updated", updatedPost });
@@ -97,12 +101,12 @@ async function addComment(req, res) {
 	try {
 		const { 
 			postId,
-			username,
 			text,
 			time,
+			author,
 		} = req.body;
 
-		const newComment = await db.addComment(Number(postId), username, text, time);
+		const newComment = await db.addComment(Number(postId), text, time, author);
 		res.json({ message: "comment created", newComment });
 	} catch (err) {
 		res.status(500).json({ error: err.message });

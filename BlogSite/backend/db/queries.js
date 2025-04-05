@@ -18,13 +18,14 @@ async function getPost(id) {
 			posts.review,
 			posts.rating,
 			posts.datewatched,
+			posts.author,
 			COALESCE(json_agg(
 				json_build_object(
 					'id', comments.id,
 					'postId', comments.post_id,
-					'username', comments.username,
 					'text', comments.text,
-					'time', comments.timecreated
+					'time', comments.timecreated,
+					'author', comments.author
 				)
 			) FILTER (WHERE comments.id IS NOT NULL), '[]') AS comments
 		FROM posts
@@ -47,14 +48,15 @@ async function addPost(
 	releaseDate,
 	review,
 	rating,
-	dateWatched,
+	datewatched,
+	author,
 ) {
 	const result = await pool.query(
 		`INSERT INTO posts 
-		(movie, director, poster, releaseDate, review, rating, dateWatched)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		(movie, director, poster, releaseDate, review, rating, datewatched, author)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING *`
-		, [movie, director, poster, releaseDate, review, rating, dateWatched]
+		, [movie, director, poster, releaseDate, review, rating, datewatched, author]
 	);
 	return result.rows[0];
 }
@@ -67,7 +69,8 @@ async function updatePost(
 	releaseDate,
 	review,
 	rating,
-	dateWatched
+	dateWatched,
+	author,
 ) {
 	const result = await pool.query(
 		`
@@ -78,11 +81,12 @@ async function updatePost(
 		    releaseDate = $5, 
 		    review = $6, 
 		    rating = $7, 
-		    dateWatched = $8 
+		    datewatched = $8,
+			author = $9
 		WHERE id = $1 
 		RETURNING *
 		`
-		,[id, movie, director, poster, releaseDate, review, rating, dateWatched]
+		,[id, movie, director, poster, releaseDate, review, rating, dateWatched, author]
 	);
 
 	if (result.rowCount === 0) {
@@ -101,13 +105,13 @@ async function deletePost(id) {
 	return result.rows;
 }
 
-async function addComment(postId, username, text, time) {
+async function addComment(postId, text, time, author) {
 	const result = await pool.query(
 		`
-		INSERT INTO comments (post_id, username, text, timeCreated) 
+		INSERT INTO comments (post_id, text, timeCreated, author) 
 		VALUES ($1, $2, $3, $4) 
 		RETURNING *`,
-		[postId, username, text, time]
+		[postId, text, time, author]
 	);
 	
 	return result.rows[0];
@@ -119,7 +123,7 @@ async function deleteComment(commentId) {
 	if (result.rowCount == 0) {
 		throw new NotFoundError("Comment", id);
 	}
-	return result.rows;
+	return result.rows[0];
 }
 
 async function getUser(username) {
